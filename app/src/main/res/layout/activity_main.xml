@@ -21,12 +21,6 @@
             android:textColor="@color/colorBlack"
             android:textSize="16sp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="5dp"
-            android:background="@color/colorLightGray" />
-
         <RelativeLayout
             android:id="@+id/rl"
             android:layout_width="match_parent"
@@ -59,9 +53,10 @@
         android:scrollbars="none" />
 
     <View
+        android:id="@+id/v_x"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorLightGray" />
+        android:background="@color/colorWhite" />
 
     <RadioGroup
         android:id="@+id/rg"

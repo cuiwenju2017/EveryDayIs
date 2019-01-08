@@ -9,122 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:gravity="center"
-            android:text="字号" />
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/boder"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/small"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:background="@drawable/tebbar_bg"
-                android:button="@null"
-                android:gravity="center"
-                android:text="小"
-                android:textColor="@color/selector_tv" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/colorBlack" />
-
-            <RadioButton
-                android:id="@+id/center"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:background="@drawable/tebbar_bg"
-                android:button="@null"
-                android:gravity="center"
-                android:text="中"
-                android:textColor="@color/selector_tv" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/colorBlack" />
-
-            <RadioButton
-                android:id="@+id/large"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:background="@drawable/tebbar_bg"
-                android:button="@null"
-                android:gravity="center"
-                android:text="大"
-                android:textColor="@color/selector_tv" />
-        </RadioGroup>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="背景" />
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:button="@null"
-                android:drawableTop="@drawable/tebbar_one"
-                android:gravity="center" />
-
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
-                android:button="@null"
-                android:drawableTop="@drawable/tebbar_two"
-                android:gravity="center" />
-
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
-                android:button="@null"
-                android:drawableTop="@drawable/tebbar_three"
-                android:gravity="center" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
-                android:button="@null"
-                android:drawableTop="@drawable/tebbar_four"
-                android:gravity="center" />
-        </RadioGroup>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="30dp">
@@ -143,7 +27,6 @@
             android:layout_gravity="center"
             android:background="@android:color/transparent"
             android:button="@drawable/btn_backgrounds"
-            android:checked="false"
             android:textOff="关"
             android:textOn="开" />
     </RelativeLayout>

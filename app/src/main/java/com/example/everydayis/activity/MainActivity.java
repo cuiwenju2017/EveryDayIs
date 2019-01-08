@@ -3,10 +3,7 @@ package com.example.everydayis.activity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -21,7 +18,6 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,10 +36,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,21 +47,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tv_title, tv_author, tv_wc;
     private WebView wv;
     //定义WebView内容两边对齐样式
-    private static final String WEBVIEW_CONTENT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em;\">%s</body></html>";
-    private static final String WEBVIEW_CONTENT_SMALL = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; font-size: 12px;\">%s</body></html>";
-    private static final String WEBVIEW_CONTENT_LARGE = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; font-size: 20px;\">%s</body></html>";
-    private RadioButton rb_random, rb_curr, rb_next, rb_prev, rb_set, small, center, large;
+    private static final String WEBVIEW_CONTENT_NIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #313639;\">%s</body></html>";
+    private static final String WEBVIEW_CONTENT_LIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #ffffff;\">%s</body></html>";
+    private RadioButton rb_random, rb_curr, rb_next, rb_prev, rb_set;
     private String prev, next, curr;
     private RelativeLayout rl;
     private boolean mBackKeyPressed = false;//记录是否有首次按键
     private Dialog dialog;
-    private View inflate;
+    private View inflate, v_x;
     private JSONObject obj, obj2;
     SharedPreferences sprfMain;
     SharedPreferences.Editor editorMain;
+    private int bg;
+    private LinearLayout ll;
+    private ToggleButton tb;
 
     private String data;
-    private final static int TIME_OUT = 2000;//超时时间
+    private final static int TIME_OUT = 1000;//超时时间
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -82,14 +77,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         tv_title.setText(obj2.getString("title"));
                         tv_author.setText(obj2.getString("author"));
                         tv_wc.setText("字数：" + obj2.getString("wc"));
+                        //取出保存的值
                         sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
-                        int size = sprfMain.getInt("size", 0);
-                        if (size == 0) {//判断设置字体大小并设置
-                            wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_SMALL, obj2.getString("content")), "text/html", "utf-8", null);
-                        } else if (size == 1) {
-                            wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT, obj2.getString("content")), "text/html", "utf-8", null);
-                        } else if (size == 2) {
-                            wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_LARGE, obj2.getString("content")), "text/html", "utf-8", null);
+                        bg = sprfMain.getInt("bg", 1);
+                        if (bg == 0) {
+                            wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_NIGHT, obj2.getString("content")), "text/html", "utf-8", null);
+                            ll.setBackgroundResource(R.color.colorNight);
+                            v_x.setBackgroundResource(R.color.colorNight);
+                        } else if (bg == 1) {
+                            wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_LIGHT, obj2.getString("content")), "text/html", "utf-8", null);
+                            ll.setBackgroundResource(R.color.colorWhite);
+                            v_x.setBackgroundResource(R.color.colorLightGray);
                         }
                         JSONObject obj3 = new JSONObject(obj2.getString("date"));
                         prev = obj3.getString("prev");//前一天日期
@@ -141,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rb_next = findViewById(R.id.rb_next);//后一天
         rb_set = findViewById(R.id.rb_set);//设置
         rl = findViewById(R.id.rl);//作者布局
+        ll = findViewById(R.id.ll);//整体背景
+        v_x = findViewById(R.id.v_x);//线的背景
         //设置监听
         wv.setOnScrollChangeListener(this);
         rb_random.setOnClickListener(this);
@@ -191,51 +191,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.small://小字体
-                try {
-                    wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_SMALL, obj2.getString("content")), "text/html", "utf-8", null);
-                    sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
-                    editorMain = sprfMain.edit();
-                    editorMain.putInt("size", 0);
-                    editorMain.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.center://中字体
-                try {
-                    wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT, obj2.getString("content")), "text/html", "utf-8", null);
-                    sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
-                    editorMain = sprfMain.edit();
-                    editorMain.putInt("size", 1);
-                    editorMain.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.large://大字体
-                try {
-                    wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_LARGE, obj2.getString("content")), "text/html", "utf-8", null);
-                    sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
-                    editorMain = sprfMain.edit();
-                    editorMain.putInt("size", 2);
-                    editorMain.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                break;
             case R.id.rb_set://设置
                 dialog = new Dialog(this, R.style.ActionSheetDialogStyle);
                 //填充对话框的布局
                 inflate = LayoutInflater.from(this).inflate(R.layout.dialog, null);
                 //获取控件
-                small = inflate.findViewById(R.id.small);
-                center = inflate.findViewById(R.id.center);
-                large = inflate.findViewById(R.id.large);
+                tb = inflate.findViewById(R.id.tb);//夜间
                 //获取监听
-                small.setOnClickListener(this);
-                center.setOnClickListener(this);
-                large.setOnClickListener(this);
+                tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            try {
+                                wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_NIGHT, obj2.getString("content")), "text/html", "utf-8", null);
+                                sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
+                                editorMain = sprfMain.edit();
+                                editorMain.putInt("bg", 0);
+                                editorMain.commit();
+                                ll.setBackgroundResource(R.color.colorNight);
+                                v_x.setBackgroundResource(R.color.colorNight);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_LIGHT, obj2.getString("content")), "text/html", "utf-8", null);
+                                sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
+                                editorMain = sprfMain.edit();
+                                editorMain.putInt("bg", 1);
+                                editorMain.commit();
+                                ll.setBackgroundResource(R.color.colorWhite);
+                                v_x.setBackgroundResource(R.color.colorLightGray);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+                //取出保存的值
+                sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
+                bg = sprfMain.getInt("bg", 1);
+                if (bg == 0) {
+                    tb.setChecked(true);
+                } else if (bg == 1) {
+                    tb.setChecked(false);
+                }
                 //将布局设置给Dialog
                 dialog.setContentView(inflate);
                 //获取当前Activity所在的窗体
@@ -396,5 +396,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         }
     }
-
 }

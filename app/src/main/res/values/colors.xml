@@ -12,4 +12,5 @@
     <color name="colorOrange">#DCC69D</color>
     <color name="colorPink">#FAE2E0</color>
     <color name="colorNight">#313639</color>
+    <color name="colorNight_text">#8576AA</color>
 </resources>

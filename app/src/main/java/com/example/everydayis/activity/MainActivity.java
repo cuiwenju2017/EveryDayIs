@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tv_title, tv_author, tv_wc;
     private WebView wv;
     //定义WebView内容两边对齐样式
-    private static final String WEBVIEW_CONTENT_NIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #313639;\">%s</body></html>";
+    private static final String WEBVIEW_CONTENT_NIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #313639; color: #8576AA;\">%s</body></html>";
     private static final String WEBVIEW_CONTENT_LIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #ffffff;\">%s</body></html>";
     private RadioButton rb_random, rb_curr, rb_next, rb_prev, rb_set;
     private String prev, next, curr;
@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int bg;
     private LinearLayout ll;
     private ToggleButton tb;
+    private LinearLayout ll_dialog;
 
     private String data;
     private final static int TIME_OUT = 1000;//超时时间
@@ -84,10 +85,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_NIGHT, obj2.getString("content")), "text/html", "utf-8", null);
                             ll.setBackgroundResource(R.color.colorNight);
                             v_x.setBackgroundResource(R.color.colorNight);
+                            tv_title.setTextColor(getResources().getColor(R.color.colorNight_text));
+                            tv_author.setTextColor(getResources().getColor(R.color.colorNight_text));
+                            tv_wc.setTextColor(getResources().getColor(R.color.colorNight_text));
                         } else if (bg == 1) {
                             wv.loadDataWithBaseURL(null, String.format(WEBVIEW_CONTENT_LIGHT, obj2.getString("content")), "text/html", "utf-8", null);
                             ll.setBackgroundResource(R.color.colorWhite);
                             v_x.setBackgroundResource(R.color.colorLightGray);
+                            tv_title.setTextColor(getResources().getColor(R.color.colorBlack));
+                            tv_author.setTextColor(getResources().getColor(R.color.colorBlack));
+                            tv_wc.setTextColor(getResources().getColor(R.color.colorBlack));
                         }
                         JSONObject obj3 = new JSONObject(obj2.getString("date"));
                         prev = obj3.getString("prev");//前一天日期
@@ -118,9 +125,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //去掉Activity上面的状态栏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         initView();
         initData();
@@ -197,6 +201,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 inflate = LayoutInflater.from(this).inflate(R.layout.dialog, null);
                 //获取控件
                 tb = inflate.findViewById(R.id.tb);//夜间
+                ll_dialog = inflate.findViewById(R.id.ll_dialog);//背景
+                //取出保存的值
+                sprfMain = getSharedPreferences("counter", Context.MODE_PRIVATE);
+                bg = sprfMain.getInt("bg", 1);
+                if (bg == 0) {
+                    ll_dialog.setBackgroundColor(getResources().getColor(R.color.colorNight));
+                } else if (bg == 1) {
+                    ll_dialog.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                }
                 //获取监听
                 tb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -210,6 +223,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 editorMain.commit();
                                 ll.setBackgroundResource(R.color.colorNight);
                                 v_x.setBackgroundResource(R.color.colorNight);
+                                tv_title.setTextColor(getResources().getColor(R.color.colorNight_text));
+                                tv_author.setTextColor(getResources().getColor(R.color.colorNight_text));
+                                tv_wc.setTextColor(getResources().getColor(R.color.colorNight_text));
+                                dialog.dismiss();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -222,6 +239,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 editorMain.commit();
                                 ll.setBackgroundResource(R.color.colorWhite);
                                 v_x.setBackgroundResource(R.color.colorLightGray);
+                                tv_title.setTextColor(getResources().getColor(R.color.colorBlack));
+                                tv_author.setTextColor(getResources().getColor(R.color.colorBlack));
+                                tv_wc.setTextColor(getResources().getColor(R.color.colorBlack));
+                                dialog.dismiss();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

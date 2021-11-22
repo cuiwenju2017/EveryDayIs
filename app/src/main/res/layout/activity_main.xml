@@ -63,8 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="2dp"
-        android:weightSum="5">
+        android:padding="2dp">
 
         <RadioButton
             android:id="@+id/rb_set"
@@ -75,39 +74,6 @@
             android:drawableTop="@drawable/set"
             android:gravity="center"
             android:text="设置"
-            android:textSize="10sp" />
-
-        <RadioButton
-            android:id="@+id/rb_prev"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/prev"
-            android:gravity="center"
-            android:text="前一天"
-            android:textSize="10sp" />
-
-        <RadioButton
-            android:id="@+id/rb_curr"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/curr"
-            android:gravity="center"
-            android:text="今日"
-            android:textSize="10sp" />
-
-        <RadioButton
-            android:id="@+id/rb_next"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/next"
-            android:gravity="center"
-            android:text="后一天"
             android:textSize="10sp" />
 
         <RadioButton

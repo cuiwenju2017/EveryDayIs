@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //定义WebView内容两边对齐样式
     private static final String WEBVIEW_CONTENT_NIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #313639; color: #8576AA;\">%s</body></html>";
     private static final String WEBVIEW_CONTENT_LIGHT = "<html><head></head><body style=\"text-align:justify;margin:10;text-indent:2em; background: #ffffff;\">%s</body></html>";
-    private RadioButton rb_random, rb_curr, rb_next, rb_prev, rb_set;
-    private String prev, next, curr;
+    private RadioButton rb_random,rb_set;
     private RelativeLayout rl;
     private boolean mBackKeyPressed = false;//记录是否有首次按键
     private Dialog dialog;
@@ -96,18 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             tv_author.setTextColor(getResources().getColor(R.color.colorBlack));
                             tv_wc.setTextColor(getResources().getColor(R.color.colorBlack));
                         }
-                        JSONObject obj3 = new JSONObject(obj2.getString("date"));
-                        prev = obj3.getString("prev");//前一天日期
-                        curr = obj3.getString("curr");//今日日期
-                        next = obj3.getString("next");//后一天日期
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");// HH:mm:ss
-                        //获取当前时间
-                        Date date = new Date(System.currentTimeMillis());
-                        if (curr.equals(simpleDateFormat.format(date))) {
-                            rb_next.setVisibility(View.GONE);//隐藏后一天
-                        } else {
-                            rb_next.setVisibility(View.VISIBLE);//显示后一天
-                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -138,9 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_wc = findViewById(R.id.tv_wc);//字数
         wv = findViewById(R.id.wv);//正文
         rb_random = findViewById(R.id.rb_random);//随机
-        rb_prev = findViewById(R.id.rb_prev);//前一天
-        rb_curr = findViewById(R.id.rb_curr);//今日
-        rb_next = findViewById(R.id.rb_next);//后一天
+
         rb_set = findViewById(R.id.rb_set);//设置
         rl = findViewById(R.id.rl);//作者布局
         ll = findViewById(R.id.ll);//整体背景
@@ -148,9 +133,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置监听
         wv.setOnScrollChangeListener(this);
         rb_random.setOnClickListener(this);
-        rb_curr.setOnClickListener(this);
-        rb_prev.setOnClickListener(this);
-        rb_next.setOnClickListener(this);
         rb_set.setOnClickListener(this);
     }
 
@@ -161,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 try {
                     @SuppressWarnings("deprecation")
-                    String PATH = HttpUtils.host + "/today?dev=1";
+                    String PATH = HttpUtils.host + "/random?dev=1";
                     URL url = new URL(PATH);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     //配置参数
@@ -272,119 +254,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dialogWindow.setAttributes(lp);
                 dialog.show();//显示对话框
                 break;
-            case R.id.rb_prev://前一天
-                new Thread(new Runnable() {
-                    @SuppressLint("HandlerLeak")
-                    @Override
-                    public void run() {
-                        try {
-                            @SuppressWarnings("deprecation")
-                            String PATH = HttpUtils.host + "/day?dev=1&date=" + prev;
-                            URL url = new URL(PATH);
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            //配置参数
-                            connection.setRequestMethod("GET");
-                            connection.setConnectTimeout(TIME_OUT);
-                            connection.setReadTimeout(TIME_OUT);
-                            //打开链接
-                            connection.connect();
-                            //获取状态码
-                            int responseCode = connection.getResponseCode();
-                            if (200 == responseCode) {
-                                //获取返回值
-                                InputStream inputStream = connection.getInputStream();
-                                //将字节流输入流转换为字符串
-                                data = StreamUtils.inputSteam2String(inputStream);
-                                handler.obtainMessage(RESULT_OK, data).sendToTarget();
-                            } else {
-                                handler.obtainMessage(RESULT_CANCELED, responseCode).sendToTarget();
-                            }
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                            handler.obtainMessage(RESULT_CANCELED, e.getMessage()).sendToTarget();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            handler.obtainMessage(RESULT_CANCELED, e.getMessage()).sendToTarget();
-                        }
-                    }
-                }).start();
-                break;
-            case R.id.rb_curr://今日
-                initData();
-                break;
-            case R.id.rb_next://后一天
-                new Thread(new Runnable() {
-                    @SuppressLint("HandlerLeak")
-                    @Override
-                    public void run() {
-                        try {
-                            @SuppressWarnings("deprecation")
-                            String PATH = HttpUtils.host + "/day?dev=1&date=" + next;
-                            URL url = new URL(PATH);
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            //配置参数
-                            connection.setRequestMethod("GET");
-                            connection.setConnectTimeout(TIME_OUT);
-                            connection.setReadTimeout(TIME_OUT);
-                            //打开链接
-                            connection.connect();
-                            //获取状态码
-                            int responseCode = connection.getResponseCode();
-                            if (200 == responseCode) {
-                                //获取返回值
-                                InputStream inputStream = connection.getInputStream();
-                                //将字节流输入流转换为字符串
-                                data = StreamUtils.inputSteam2String(inputStream);
-                                handler.obtainMessage(RESULT_OK, data).sendToTarget();
-                            } else {
-                                handler.obtainMessage(RESULT_CANCELED, responseCode).sendToTarget();
-                            }
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                            handler.obtainMessage(RESULT_CANCELED, e.getMessage()).sendToTarget();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            handler.obtainMessage(RESULT_CANCELED, e.getMessage()).sendToTarget();
-                        }
-                    }
-                }).start();
-                break;
             case R.id.rb_random://随机
-                new Thread(new Runnable() {
-                    @SuppressLint("HandlerLeak")
-                    @Override
-                    public void run() {
-                        try {
-                            @SuppressWarnings("deprecation")
-                            String PATH = HttpUtils.host + "/random?dev=1";
-                            URL url = new URL(PATH);
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            //配置参数
-                            connection.setRequestMethod("GET");
-                            connection.setConnectTimeout(TIME_OUT);
-                            connection.setReadTimeout(TIME_OUT);
-                            //打开链接
-                            connection.connect();
-                            //获取状态码
-                            int responseCode = connection.getResponseCode();
-                            if (200 == responseCode) {
-                                //获取返回值
-                                InputStream inputStream = connection.getInputStream();
-                                //将字节流输入流转换为字符串
-                                data = StreamUtils.inputSteam2String(inputStream);
-                                handler.obtainMessage(RESULT_OK, data).sendToTarget();
-                            } else {
-                                handler.obtainMessage(RESULT_CANCELED, responseCode).sendToTarget();
-                            }
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                            handler.obtainMessage(RESULT_CANCELED, e.getMessage()).sendToTarget();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            handler.obtainMessage(RESULT_CANCELED, e.getMessage()).sendToTarget();
-                        }
-                    }
-                }).start();
+                initData();
                 break;
             default:
                 break;
